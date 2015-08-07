@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,7 +37,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private Firebase mRef;
     String key="https://cloudm.firebaseio.com/.json";
-
+    String strJson = "https://cloudm.firebaseio.com/.json";
+    String data = "";
+    private String jsonResponse;
 
 
     EditText etNum1;
@@ -81,27 +84,47 @@ public class MainActivity extends Activity implements View.OnClickListener {
         btnDiv.setOnClickListener(this);
 
         mRef = new Firebase("https://cloudm.firebaseio.com/");
-      String strJson = " { \"Employee\":[{\"value\":\"04\"}]}";
-       String data = "";
-        try {
-           JSONObject jsonRootObject = new JSONObject(strJson);
+
+
+        final JsonObjectRequest request=new JsonObjectRequest(Request.Method.GET, strJson, null + " ", new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+
+                try {
+                    String value=response.getString("value");
+                    jsonResponse=" ";
+                    jsonResponse +="Value "+value;
+                    json.setText(jsonResponse);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Toast.makeText(getApplicationContext()," error "+ e.getMessage(),Toast.LENGTH_LONG).show();
+
+                }
+            }
+
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext()," error "+ error.getMessage(),Toast.LENGTH_LONG).show();
+            }
+
+        });
+        MyApplication.getInstance().addToRequestQueue(request);
+
+
+      //  try {
+        //   JSONObject jsonRootObject = new JSONObject(strJson);
 
           //Get the instance of JSONArray that contains JSONObjects
-           JSONArray jsonArray = jsonRootObject.optJSONArray("Employee");
-
-         //  Iterate the jsonArray and print the info of JSONObjects
-          for (int i = 0; i < jsonArray.length(); i++) {
-              JSONObject jsonObject = jsonArray.getJSONObject(i);
-
-              int value = Integer.parseInt(jsonObject.optString("value").toString());
-
-
-               data += "value" + value;
-           }
-           json.setText(data);
-       } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        // JSONObject object= jsonRootObject.getJSONObject("value");
+         //String attr=jsonRootObject.getString("value");
+           //    data += "value "+attr ;
+           //} catch (JSONException e1) {
+            //e1.printStackTrace();
+        //}
+        //json.setText(data);
+       }
         //try {
           //  JSONObject o=new JSONObject(key);
             //String from=o.getString("value");
@@ -110,7 +133,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
           //  e.printStackTrace();
         //}
 
-    }
+
 
 
     @Override
