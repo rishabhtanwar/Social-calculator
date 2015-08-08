@@ -36,23 +36,16 @@ import java.util.Map;
 public class MainActivity extends Activity implements View.OnClickListener {
 
     private Firebase mRef;
-    String key="https://cloudm.firebaseio.com/.json";
     String strJson = "https://cloudm.firebaseio.com/.json";
-    String data = "";
     private String jsonResponse;
-
-
     EditText etNum1;
     EditText etNum2;
-
     Button btnAdd;
     Button btnSub;
     Button btnMult;
     Button btnDiv;
-
     TextView tvResult;
     TextView json;
-
     String oper = "";
 
     /**
@@ -83,9 +76,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
         btnMult.setOnClickListener(this);
         btnDiv.setOnClickListener(this);
 
+        // set the refrence to the firebase database
         mRef = new Firebase("https://cloudm.firebaseio.com/");
-
-
+        sendJsonRequest();
+    }
+    public void sendJsonRequest(){
+        //get the json object response request
         final JsonObjectRequest request=new JsonObjectRequest(Request.Method.GET, strJson, null + " ", new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -110,31 +106,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
             }
 
         });
+        // add the request queue to the json request
         MyApplication.getInstance().addToRequestQueue(request);
 
-
-      //  try {
-        //   JSONObject jsonRootObject = new JSONObject(strJson);
-
-          //Get the instance of JSONArray that contains JSONObjects
-        // JSONObject object= jsonRootObject.getJSONObject("value");
-         //String attr=jsonRootObject.getString("value");
-           //    data += "value "+attr ;
-           //} catch (JSONException e1) {
-            //e1.printStackTrace();
-        //}
-        //json.setText(data);
-       }
-        //try {
-          //  JSONObject o=new JSONObject(key);
-            //String from=o.getString("value");
-            //json.setText(from);
-        //} catch (JSONException e) {
-          //  e.printStackTrace();
-        //}
-
-
-
+    }
 
     @Override
     public void onClick(View v) {
@@ -160,7 +135,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             case R.id.btnAdd:
                 oper = "+";
                 result = num1 + num2;
-                mRef.child("value").setValue(result);
+                mRef.child("value").setValue(result);//set the value to firebase data
                 break;
             case R.id.btnSub:
                 oper = "-";
